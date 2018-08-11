@@ -7,13 +7,15 @@ def match_stage(rider_list: list, vehicles: list) -> list:
     :param vehicles:
     :return:
     '''
-    return
+    for i in range(len(vehicles)):
+        print() # match rider for every driver (update the pickup_list)
+    return vehicles
 
 def routing_stage(rider_list: list, vehicle: Vehicle) -> list:
     '''
     :param rider_list:
     :param vehicles:
-    :return: a route of an vehicle
+    :return: a route of an vehicle with the pickup_list from match_stage
     '''
     return
 

@@ -19,12 +19,12 @@ def action(rider_list)->list:
     aim at the max obj
     :return:
     '''
-    match_stage(rider_list, vehicles)
-    routing_stage(rider_list, vehicles)
-    update()
+    new_vehicles = match_stage(rider_list, vehicles)
+    new_vehicles = routing_stage(rider_list, new_vehicles)
+    update(new_vehicles)
     return
 
-def update():
+def update(vehicles: list):
     '''
     调用Vehicles和State的update方法
     update time
@@ -42,11 +42,12 @@ def run(current_time: int, time_rider: dict):
     :param time_rider:
     :return:
     '''
-    time_rider = gen_time_rider(time_rider)
     rider_list = time_rider[current_time]
     action(rider_list, vehicles)
 
 def init(time: int, time_rider: dict):
+    time_rider = gen_time_rider(time_rider)
     while time < 24*60:
         run(time, time_rider)
+        time += 1
     return
