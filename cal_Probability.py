@@ -1,30 +1,29 @@
 from read_data import read_riders
-from numpy import np
+import numpy as np
+import numpy
+
+loc_nums = 20
+slot_nums = 60 * 24
+days = 31
+P_i = np.zeros([loc_nums + 1, slot_nums], dtype=float)
+P_ij = np.zeros([loc_nums + 1,loc_nums + 1,slot_nums],dtype=float)
 
 def cal_P_i():
-    days = 31
     data = read_riders(r'data\yellow_tripdata_2017-12.csv')
-    data.sort(key = take_puLoctaion)
-    loc_nums = data[-1][2]
-    slot_nums = 60 * 24
-    P_i = np.array(loc_nums, slot_nums)
-    for i in range(len(data)):
-        data[i].insert(0, data[i][0].day)
-        data[i][1] = data[i][1].hour * 60 + data[i][1].minute
-        data[i][2] = data[i][2].hour * 60 + data[i][2].minute
-    for i in range(loc_nums):
-        loc_temp = list(filter(lambda x:x[3] == i, data))
-        for j in range(len(loc_temp)):
-            for k in range(slot_nums):
-                slot_temp = list(filter(lambda x:x[0] == k, loc_temp))
-                for d in range(days):
-                    final = list(filter(lambda x: x[0] == d, slot_temp))
-                    P_i[i][k] = len(len(final)) / days
+    for j in data.keys():
+        data_frame = data[j]
+        slot_grouped_dict = dict(list(data_frame.groupby('tpep_pickup_datetime')))
+        cal_P_ij(j, slot_grouped_dict)
+        for k in slot_grouped_dict.keys():
+            df = slot_grouped_dict[k]
+            day_grouped_dict = dict(list(df.groupby('day')))
+            P_i[j][k] = len(day_grouped_dict.keys()) / days
+    numpy.savetxt(r'data\p_i.csv', P_i, delimiter = ',',fmt = '%f')
 
+def cal_P_ij(i:int, slot_grouped_dict: dict):
+    for t in slot_grouped_dict.keys():
+        drop_grouped_dict = dict(list(slot_grouped_dict[t].groupby('DOLocationID')))
+        for j in drop_grouped_dict.keys():
+            P_ij[i][j][t] = len(drop_grouped_dict[j]) / len(slot_grouped_dict[t])
 
-def take_puLoctaion(elem):
-    return elem[2]
-
-# def take_location
-
-cal_P_i()
+# cal_P_i()
