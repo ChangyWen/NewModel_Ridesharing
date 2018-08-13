@@ -5,7 +5,7 @@ def match_stage(rider_list: list, vehicles: list) -> list:
     '''
     :param rider_list:
     :param vehicles:
-    :return:
+    :return: list
     '''
     for i in range(len(vehicles)):
         print() # match rider for every driver (update the pickup_list)

@@ -17,7 +17,7 @@ def action(rider_list)->list:
     '''
     action for every vehicle
     aim at the max obj
-    :return:
+    :return: list
     '''
     new_vehicles = match_stage(rider_list, vehicles)
     new_vehicles = routing_stage(rider_list, new_vehicles)
