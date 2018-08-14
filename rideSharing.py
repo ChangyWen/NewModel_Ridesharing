@@ -1,28 +1,34 @@
-from util import *
-from strategy import *
+import util
+import strategy
 from numpy import np
-
-# map = np.zeros(100, 100)
-# distance = np.zeros(100, 100)
-# p_i = np.zeros((100, 100, 24*60), dtype=np.float)
-# state = State()
-# time = 1
-# vehicle = Vehicle()
-# vehicles = [vehicle]
-# rider = Rider()
-# riders = [rider]
-# time_rider = {} # t:[rider_list]
-
-def action(rider_list)->list:
-    '''
-    action for every vehicle
-    aim at the max obj
-    :return: list
-    '''
-    new_vehicles = match_stage(rider_list, vehicles)
-    new_vehicles = routing_stage(rider_list, new_vehicles)
-    update(new_vehicles)
-    return
+import init_instances as ii
+import copy
+import strategy as st
+def action(vehicle: util.Vehicle):
+    # state = copy.deepcopy(ii.state)
+    # riders = copy.deepcopy(ii.riders)
+    riders = ii.riders
+    rider = riders[vehicle.picked_up[0]]
+    from_node = rider.from_node
+    to_node = rider.to_node
+    (shortest_path, shortest_time) = ii.floyd_path(from_node, to_node)
+    time_slack = rider.deadline - rider.appear_slot - shortest_time
+    if time_slack > 10:
+        neighbor = st.gen_neighbor(shortest_path, time_slack)
+        if len(neighbor) >= 2:
+            best_expected = 0
+            best_pair = [-1,-1]
+            for i in range(len(neighbor)):
+                for j in range(i+1, len(neighbor)):
+                    temp_expected = st.cal_expected_revenue(vehicle, neighbor[i] ,neighbor[j])
+                    if temp_expected > best_expected:
+                        best_expected = temp_expected
+                        best_pair[0], best_pair[1] = neighbor[i], neighbor[j]
+            vehicle.pre_pickup += best_pair
+        elif len(neighbor) > 0:
+            vehicle.pre_pickup.append(neighbor[0])
+    else:
+        return
 
 def update(vehicles: list):
     '''
@@ -34,20 +40,15 @@ def update(vehicles: list):
     time = time + 1
     for i in range(len(vehicles)):
         vehicles[i].update()
-    state.update()
+    # state.update()
 
-def run(current_time: int, time_rider: dict):
-    '''
-    :param current_time:
-    :param time_rider:
-    :return:
-    '''
-    rider_list = time_rider[current_time]
-    action(rider_list, vehicles)
+def cal_revenue(vehicle: util.Vehicle):
+    print()
 
-def init(time: int, time_rider: dict):
-    time_rider = gen_time_rider(time_rider)
-    while time < 24*60:
-        run(time, time_rider)
-        time += 1
-    return
+def run():
+    ii.init_param()
+    # vehicles = copy.deepcopy(ii.vehicles)
+    vehicles = ii.vehicles
+    for i in range(len(vehicles)):
+        action(vehicles[i])
+        cal_revenue(vehicles[i])

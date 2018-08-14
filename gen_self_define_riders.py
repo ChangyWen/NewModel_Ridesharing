@@ -26,9 +26,11 @@ def choose_instances(nums: int):
     riders_list = df.values.tolist()
     riders = sample(riders_list, nums)
     riders = pd.DataFrame(riders, columns=('tpep_pickup_datetime','tpep_dropoff_datetime','PULocationID','DOLocationID','day'))
-    riders.to_csv(r'data\choosed_instances.csv',index= False,header=True, float_format='%d')
     return riders
 
 # gen_ori_riders()
-# if __name__ == '__main__':
-#     choose_instances(500)
+if __name__ == '__main__':
+    riders_df = choose_instances(500)
+    riders_df_ = choose_instances(5000)
+    riders_df.to_csv(r'data\choosed_instances_500.csv', index=False, header=True, float_format='%d')
+    riders_df_.to_csv(r'data\choosed_instances_5000.csv', index=False, header=True, float_format='%d')

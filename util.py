@@ -1,4 +1,3 @@
-import gen_map
 from init_instances import *
 average_speed = 1
 
@@ -11,14 +10,14 @@ class vertex(object):
 
 
 class Rider(object):
-    def __init__(self, r_id, from_node: int, to_node: int, appear_time: int, deadline: int):
+    def __init__(self, r_id, from_node: int, to_node: int, appear_slot: int, deadline: int):
         self.r_id = r_id
         self.from_node = from_node
         self.to_node = to_node
         self.pu_t = 0
         self.deadline = deadline
         self.delay_t = 0
-        self.appear_time = appear_time
+        self.appear_slot = appear_slot
         self.flag = 0
 
 class Vehicle(object):
@@ -51,16 +50,16 @@ class Vehicle(object):
             for i in range(len(self.picked_up) - 1):
                 from_node = riders[self.picked_up[i]].from_node
                 to_node = riders[self.picked_up[i + 1]].to_node
-                self.route += gen_map.floyd_path(from_node, to_node)[0]
+                self.route += floyd_path(from_node, to_node)[0]
         if len(self.pre_pickup) > 0:
             from_node = riders[self.picked_up[-1]].from_node
             to_node = self.pre_pickup[0]
-            self.route += gen_map.floyd_path(from_node, to_node)
+            self.route += floyd_path(from_node, to_node)[0]
         if len(self.pre_pickup) > 1:
             for i in range(len(self.pre_pickup) - 1):
                 from_node = self.pre_pickup[i]
                 to_node = self.pre_pickup[i + 1]
-                self.route += gen_map.floyd_path(from_node, to_node)[0]
+                self.route += floyd_path(from_node, to_node)[0]
 
         '''
         clean route
@@ -73,14 +72,14 @@ class Vehicle(object):
                 self.route.pop(i - n)
                 n += 1
         ''''''
-        print()
 
 class State(object):
-    def __init__(self, current_time: int, vehicles: list, riders: list):
-        self.current_time = current_time
-        #self.p_i = p_i
-        self.vehicles = vehicles
-        self.riders = riders
+    def __init__(self, slot_riders: dict):
+        # self.slot = slot
+        # self.p_i = p_i
+        # self.vehicles = vehicles
+        # self.riders = riders
+        self.slot_riders = slot_riders
 
     def update(self):
         '''
@@ -90,7 +89,7 @@ class State(object):
         '''
         print()
 
-class Floyd_Path():
+class Floyd_Path(object):
     def __init__(self, node , node_map, path_map):
         self.node = node
         self.node_map = node_map

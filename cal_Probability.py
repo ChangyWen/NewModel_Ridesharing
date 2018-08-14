@@ -26,3 +26,5 @@ def cal_P_ij(i:int, slot_grouped_dict: dict):
         drop_grouped_dict = dict(list(slot_grouped_dict[t].groupby('DOLocationID')))
         for j in drop_grouped_dict.keys():
             P_ij[i][j][t] = len(drop_grouped_dict[j]) / len(slot_grouped_dict[t])
+
+# cal_P_i(r'data\self_gen_riders.csv')

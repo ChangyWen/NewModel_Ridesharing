@@ -10,7 +10,6 @@ import csv
 
 nodes = [i for i in range(1,loc_nums + 1)]
 # path = np.array([loc_nums + 1,loc_nums + 1], dtype=tuple)
-floyd_path = None
 
 def gen_node_list() -> list:
     node_list = []
@@ -46,7 +45,6 @@ def set_Floyd_Path():
         node_map[nodes.index(x)][nodes.index(y)] = node_map[nodes.index(y)][nodes.index(x)] = val
         path_map[nodes.index(x)][nodes.index(y)] = nodes.index(y)
         path_map[nodes.index(y)][nodes.index(x)] = nodes.index(x)
-    global floyd_path
     floyd_path = Floyd_Path(nodes, node_map, path_map)
     # print(floyd_path(7,13))
     '''
