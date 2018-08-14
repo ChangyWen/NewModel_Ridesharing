@@ -1,17 +1,17 @@
-from util import Rider, Vehicle, State
-from strategy import match_stage, routing_stage, gen_time_rider
+from util import *
+from strategy import *
 from numpy import np
 
-map = np.zeros(100, 100)
-distance = np.zeros(100, 100)
-p_i = np.zeros((100, 100, 24*60), dtype=np.float)
-state = State()
-time = 1
-vehicle = Vehicle()
-vehicles = [vehicle]
-rider = Rider()
-riders = [rider]
-time_rider = {} # t:[rider_list]
+# map = np.zeros(100, 100)
+# distance = np.zeros(100, 100)
+# p_i = np.zeros((100, 100, 24*60), dtype=np.float)
+# state = State()
+# time = 1
+# vehicle = Vehicle()
+# vehicles = [vehicle]
+# rider = Rider()
+# riders = [rider]
+# time_rider = {} # t:[rider_list]
 
 def action(rider_list)->list:
     '''

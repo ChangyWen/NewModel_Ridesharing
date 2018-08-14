@@ -1,4 +1,7 @@
+import gen_map
+from init_instances import *
 average_speed = 1
+
 
 class vertex(object):
     def __init__(self, v_id: int, x, y):
@@ -8,34 +11,68 @@ class vertex(object):
 
 
 class Rider(object):
-    def __init__(self, r_id, ori, des, appear_time, deadline, delay_t):
+    def __init__(self, r_id, from_node: int, to_node: int, appear_time: int, deadline: int):
         self.r_id = r_id
-        self.ori = ori
-        self.des = des
+        self.from_node = from_node
+        self.to_node = to_node
         self.pu_t = 0
         self.deadline = deadline
-        self.delay_t = delay_t
+        self.delay_t = 0
         self.appear_time = appear_time
         self.flag = 0
 
 class Vehicle(object):
-    def __init__(self):
-        self.v_id
-        self.location
-        self.cap
-        self.load
-        self.pickup_list = []
+    def __init__(self, v_id, location: int, slot: int, first_rider: int):
+        self.v_id = v_id
+        self.location = location
+        self.slot = slot
+        self.cap = 3
+        self.load = 0
+        self.picked_up = [first_rider]
+        self.pre_pickup = []
         self.route = []
         self.violation_time = 0
 
+    def insert_rider(self, rider: int, index: int = -1):
+        if index == -1:
+            self.picked_up.append(rider)
+        else:
+            self.picked_up.insert(index, rider)
+
+    def insert_pre_pickup(self, loc: int, index: int = -1):
+        if index == -1:
+            self.pre_pickup.append(loc)
+        else:
+            self.pre_pickup.insert(index, loc)
+
     def update(self):
+        self.route = []
+        if len(self.picked_up) > 1:
+            for i in range(len(self.picked_up) - 1):
+                from_node = riders[self.picked_up[i]].from_node
+                to_node = riders[self.picked_up[i + 1]].to_node
+                self.route += gen_map.floyd_path(from_node, to_node)[0]
+        if len(self.pre_pickup) > 0:
+            from_node = riders[self.picked_up[-1]].from_node
+            to_node = self.pre_pickup[0]
+            self.route += gen_map.floyd_path(from_node, to_node)
+        if len(self.pre_pickup) > 1:
+            for i in range(len(self.pre_pickup) - 1):
+                from_node = self.pre_pickup[i]
+                to_node = self.pre_pickup[i + 1]
+                self.route += gen_map.floyd_path(from_node, to_node)[0]
+
         '''
-        update pickup_list
-        update load
-        update route
-        update violation_time
-        :return:
+        clean route
         '''
+        temp_route = self.route.copy()
+        n = 0
+        nums = len(self.route) - 1
+        for i in range(nums):
+            if temp_route[i] == temp_route[i+1]:
+                self.route.pop(i - n)
+                n += 1
+        ''''''
         print()
 
 class State(object):

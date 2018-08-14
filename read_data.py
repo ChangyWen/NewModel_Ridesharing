@@ -34,7 +34,8 @@ def read_riders(file_name) -> dict:
 def simply_read_riders(file_name) -> dict:
     inputfile = open(file_name, 'rb')
     data = pd.read_csv(inputfile, usecols=['tpep_pickup_datetime', 'tpep_dropoff_datetime', 'PULocationID', \
-                                           'DOLocationID'], iterator=True)
+                                           'DOLocationID', 'day'])
+    # print(type(data))
     grouped_dict = dict(list(data.groupby('PULocationID')))
     return grouped_dict
 # read_riders(r'data\yellow_tripdata_2017-12.csv')
