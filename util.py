@@ -1,4 +1,4 @@
-from init_instances import *
+import init_instances as ii
 average_speed = 1
 
 
@@ -44,26 +44,24 @@ class Vehicle(object):
         else:
             self.pre_pickup.insert(index, loc)
 
-    def update(self):
-        self.route = []
-        if len(self.picked_up) > 1:
-            for i in range(len(self.picked_up) - 1):
-                from_node = riders[self.picked_up[i]].from_node
-                to_node = riders[self.picked_up[i + 1]].to_node
-                self.route += floyd_path(from_node, to_node)[0]
+    def update_first(self):
+        self.route = [self.location]
+        from_node = ii.riders[self.picked_up[0]].from_node
+        self.route.append(from_node)
         if len(self.pre_pickup) > 0:
-            from_node = riders[self.picked_up[-1]].from_node
+            from_node = ii.riders[self.picked_up[-1]].from_node
             to_node = self.pre_pickup[0]
-            self.route += floyd_path(from_node, to_node)[0]
+            self.route += ii.floyd_path(from_node, to_node)[0]
+            from_node = to_node
         if len(self.pre_pickup) > 1:
-            for i in range(len(self.pre_pickup) - 1):
-                from_node = self.pre_pickup[i]
-                to_node = self.pre_pickup[i + 1]
-                self.route += floyd_path(from_node, to_node)[0]
+            for i in range(1, len(self.pre_pickup)):
+                from_node = self.pre_pickup[i-1]
+                to_node = self.pre_pickup[i]
+                self.route += ii.floyd_path(from_node, to_node)[0]
+                from_node = to_node
+        to_node = ii.riders[self.picked_up[0]].to_node
+        self.route += ii.floyd_path(from_node, to_node)[0]
 
-        '''
-        clean route
-        '''
         temp_route = self.route.copy()
         n = 0
         nums = len(self.route) - 1
@@ -71,15 +69,11 @@ class Vehicle(object):
             if temp_route[i] == temp_route[i+1]:
                 self.route.pop(i - n)
                 n += 1
-        ''''''
+        # ''''''
 
 class State(object):
     def __init__(self, slot_riders: dict):
-        # self.slot = slot
-        # self.p_i = p_i
-        # self.vehicles = vehicles
-        # self.riders = riders
-        self.slot_riders = slot_riders
+        self.s_n = slot_riders
 
     def update(self):
         '''

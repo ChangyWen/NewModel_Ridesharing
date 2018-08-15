@@ -96,7 +96,6 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
         else:
             true_key = [k for k, v in feasible_dict.items() if v == True]
             true_dict = {k:v for k, v in order_dict.items() if k in true_key}
-            print(len(true_dict))
             type2 = sorted(true_dict.items(), key=lambda d: d[1], reverse=False)[0][0]
         return_dict[drop2] = type2
     return return_dict
@@ -106,3 +105,6 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
     #         dis2 = ii.floyd_path(pre2, d)[1] + ii.floyd_path(d, drop2)[1] + ii.floyd_path(drop2, drop1)[1]
     #         dis3 = ii.floyd_path(pre2, d)[1] + ii.floyd_path(d, drop1)[1] + ii.floyd_path(drop1, drop2)[1]
     #         feasible2_check(type1, pre2, drop2, drop1, ddl_1, d, ddl, time_2)
+
+def feasible_pick(rider: int):
+    return

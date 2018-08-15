@@ -2,7 +2,7 @@ import util
 import gen_map
 import pandas as pd
 import cal_Probability as cp
-from random import randint
+#from random import randint
 
 riders = []
 vehicles = []
@@ -13,8 +13,10 @@ def init_instances():
     riders_df = pd.read_csv(r'data\choosed_instances_500.csv')
     global riders
     for i in range(len(riders_df)):
+        if riders_df.loc[i, 'tpep_pickup_datetime'] > 1300:
+            continue
         rider = util.Rider(i, riders_df.loc[i,'PULocationID'], riders_df.loc[i,'DOLocationID'],\
-                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + randint(10,20))
+                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + 20)
         rider.flag = 1
         riders.append(rider)
         vehicle = util.Vehicle(i, rider.from_node, rider.appear_slot, rider.r_id)
@@ -26,7 +28,7 @@ def init_request():
     riders_df = pd.read_csv(r'data\choosed_instances_5000.csv')
     for i in range(len(riders_df)):
         rider = util.Rider(i, riders_df.loc[i,'PULocationID'], riders_df.loc[i,'DOLocationID'],\
-                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + randint(10,20))
+                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + 20)
         riders.append(rider)
 
 def init_states():

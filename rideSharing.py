@@ -1,6 +1,7 @@
 import util
 import init_instances as ii
 import strategy as st
+import cal_revenue as cr
 def action(vehicle: util.Vehicle):
     # state = copy.deepcopy(ii.state)
     # riders = copy.deepcopy(ii.riders)
@@ -21,36 +22,31 @@ def action(vehicle: util.Vehicle):
                     if temp_expected > best_expected:
                         best_expected = temp_expected
                         best_pair[0], best_pair[1] = neighbor[i], neighbor[j]
-            vehicle.pre_pickup += best_pair
+            if best_pair != [-1,-1]:
+                vehicle.pre_pickup = best_pair
         elif len(neighbor) > 0:
             vehicle.pre_pickup.append(neighbor[0])
     else:
         return
 
-def update(vehicles: list):
-    '''
-    调用Vehicles和State的update方法
-    update time
-    :return:
-    '''
-    global time
-    time = time + 1
-    for i in range(len(vehicles)):
-        vehicles[i].update()
-    # state.update()
-
-def cal_revenue(vehicle: util.Vehicle):
-    print()
+def update(vehicle: util.Vehicle):
+    vehicle.update_first()
 
 def run():
     ii.init_param()
     # vehicles = copy.deepcopy(ii.vehicles)
     vehicles = ii.vehicles
-    for i in range(len(vehicles)):
-        if vehicles[i].slot > 1300:
-            continue
+    # for i in range(len(vehicles)):
+    for i in range(3):
         action(vehicles[i])
-        cal_revenue(vehicles[i])
+        print('yeah')
+        update(vehicles[i])
+        # print(vehicles[i].location)
+        # print(ii.riders[vehicles[i].picked_up[0]].from_node)
+        # print(ii.riders[vehicles[i].picked_up[0]].to_node)
+        print(vehicles[i].pre_pickup)
+        print(vehicles[i].route)
+        # cr.cal_final_revenue(vehicles[i])
 
 if __name__ == '__main__':
     run()
