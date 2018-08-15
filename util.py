@@ -97,7 +97,7 @@ class Floyd_Path(object):
         self.node_length = len(node_map)
         self._init_Floyd()
 
-    def __call__(self, from_node, to_node):
+    def __call__(self, from_node: int, to_node:int ):
         self.from_node = from_node - 1
         self.to_node = to_node - 1
         return self._format_path(), self.node_map[from_node - 1][to_node - 1]

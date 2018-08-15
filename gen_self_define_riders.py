@@ -1,8 +1,8 @@
 import pandas as pd
-from random import choice
-from random import randint
+# from random import choice
+# from random import randint
 from random import sample
-from cal_Probability import slot_nums,days
+# from cal_Probability import slot_nums,days
 from gen_map import *
 import util
 
@@ -29,8 +29,8 @@ def choose_instances(nums: int):
     return riders
 
 # gen_ori_riders()
-if __name__ == '__main__':
-    riders_df = choose_instances(500)
-    riders_df_ = choose_instances(5000)
-    riders_df.to_csv(r'data\choosed_instances_500.csv', index=False, header=True, float_format='%d')
-    riders_df_.to_csv(r'data\choosed_instances_5000.csv', index=False, header=True, float_format='%d')
+# if __name__ == '__main__':
+#     riders_df = choose_instances(500)
+#     riders_df_ = choose_instances(5000)
+#     riders_df.to_csv(r'data\choosed_instances_500.csv', index=False, header=True, float_format='%d')
+#     riders_df_.to_csv(r'data\choosed_instances_5000.csv', index=False, header=True, float_format='%d')

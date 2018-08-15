@@ -1,8 +1,5 @@
 import util
-import strategy
-from numpy import np
 import init_instances as ii
-import copy
 import strategy as st
 def action(vehicle: util.Vehicle):
     # state = copy.deepcopy(ii.state)
@@ -50,5 +47,10 @@ def run():
     # vehicles = copy.deepcopy(ii.vehicles)
     vehicles = ii.vehicles
     for i in range(len(vehicles)):
+        if vehicles[i].slot > 1300:
+            continue
         action(vehicles[i])
         cal_revenue(vehicles[i])
+
+if __name__ == '__main__':
+    run()

@@ -1,4 +1,4 @@
-from read_data import read_riders, simply_read_riders
+from read_data import simply_read_riders
 import numpy as np
 import numpy
 

@@ -1,4 +1,3 @@
-import gen_self_define_riders
 import util
 import gen_map
 import pandas as pd
@@ -18,7 +17,7 @@ def init_instances():
                       riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + randint(10,20))
         rider.flag = 1
         riders.append(rider)
-        vehicle = util.Vehicle(i, rider.from_node, rider.appear_time, rider.r_id)
+        vehicle = util.Vehicle(i, rider.from_node, rider.appear_slot, rider.r_id)
         vehicle.load += 1
         vehicles.append(vehicle)
 
@@ -50,7 +49,7 @@ def init_param():
     global floyd_path
     floyd_path = gen_map.set_Floyd_Path()
     cp.cal_P_i(r'data\self_gen_riders.csv')
+
 # if __name__ == '__main__':
-#     init_instances()
-#     init_request()
-#     print(len(riders))
+#     init_param()
+#     print(floyd_path(1,5))
