@@ -42,32 +42,40 @@ def simulate_pickup(v: util.Vehicle) -> int:
         slot_i += ii.floyd_path(v.route[i-1], v.route[i])[1] / util.average_speed
         v.passed_route.append(v.route[i])
         if len(ii.state.s_n[int(slot_i)][v.route[i]])> 0:
+            print('yeah')
             for rider in ii.state.s_n[int(slot_i)][v.route[i]]:
+                v.onboard.append(rider)
                 (des_order, isOk) = fc.feasible_pick(v, rider, slot_i)
                 if isOk:
+                    print('OK')
                     v.picked_up.append(rider)
-                    v.onboard.append(rider)
-                    v.update_pick(des_order)
+                    v.update_pick(v.route[i],des_order)
                     flag = True
                     break
+                else:
+                    v.onboard.pop()
         if flag:
             break
         if i == len(v.route) - 2:
             return cr.cal_final(v)
     slot_i = v.slot
     flag = False
-    for node in range(1, len(v.route) - 1):
+    for i in range(1, len(v.route) - 1):
         slot_i += ii.floyd_path(v.route[i - 1], v.route[i])[1] / util.average_speed
         v.passed_route.append(v.route[i])
         if len(ii.state.s_n[int(slot_i)][v.route[i]])> 0:
+            print('yeah')
             for rider in ii.state.s_n[int(slot_i)][v.route[i]]:
+                v.onboard.append(rider)
                 (des_order, isOk) = fc.feasible_pick(v, rider, slot_i)
                 if isOk:
+                    print('OK')
                     v.picked_up.append(rider)
-                    v.onboard.append(rider)
-                    v.update_pick(des_order)
+                    v.update_pick(v.route[i], des_order)
                     flag = True
                     break
+                else:
+                    v.onboard.pop()
         if flag:
             break
         if i == len(v.route) - 2:
@@ -83,7 +91,7 @@ def run():
         action(vehicles[i])
         print('vehicle%(i)d:'%{'i':i})
         update(vehicles[i])
-        simulate_pickup(vehicles[i])
+        print(simulate_pickup(vehicles[i]))
         # print(vehicles[i].location)
         # print(ii.riders[vehicles[i].picked_up[0]].from_node)
         # print(ii.riders[vehicles[i].picked_up[0]].to_node)

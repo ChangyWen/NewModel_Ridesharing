@@ -106,16 +106,17 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
     #         dis3 = ii.floyd_path(pre2, d)[1] + ii.floyd_path(d, drop1)[1] + ii.floyd_path(drop1, drop2)[1]
     #         feasible2_check(type1, pre2, drop2, drop1, ddl_1, d, ddl, time_2)
 
-def feasible_pick(v: util.Vehicle,rider: int, slot: int) -> (list, bool):
+def feasible_pick(v ,rider: int, slot: int) -> (list, bool):
     dict1 = {}
+    ddl_list = []
     des = []
-    final_des = []
+    final_des = {}
     s = ii.riders[rider].from_node
     if v.load >= v.cap:
         return [],False
     else:
         for rider in v.onboard:
-            dict1[rider] = ii.riders[rider].deadline
+            ddl_list.append(ii.riders[rider].deadline)
             des.append(ii.riders[rider].to_node)
         for i in range(len(des)):
             for j in range(len(des)):
@@ -128,11 +129,14 @@ def feasible_pick(v: util.Vehicle,rider: int, slot: int) -> (list, bool):
                         if k == i or k == j:
                             continue
                         t_k = t_j + ii.floyd_path(des[j], des[k])[1]
-                        if t_i <= dict1[des[i]] and t_j <= dict1[des[j]] and t_k <= dict1[des[k]]:
-                            final_des = [i,j,k]
+                        if t_i <= ddl_list[i] and t_j <= ddl_list[j] and t_k <= ddl_list[k]:
+                            final_des = {v.onboard[i]:i,v.onboard[j]:j,v.onboard[k]:k}
                             return final_des, True
                 else:
-                    if t_i <= dict1[des[i]] and t_j <= dict1[des[j]]:
-                        final_des = [i,j]
+                    if t_i <= ddl_list[i] and t_j <= ddl_list[j]:
+                        final_des = {v.onboard[i]:i,v.onboard[j]:j}
                         return final_des, True
-    return [],False
+    return {},False
+
+def check_feasible_3(v, node: int, drop:int ,ddl:int) -> bool:
+    return False

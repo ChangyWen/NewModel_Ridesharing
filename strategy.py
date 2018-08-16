@@ -37,7 +37,7 @@ def cal_time_2(type1:int, pre1:int,drop1:int,pre2:int,time_1:int) -> int:
         time_2 = time_1 + (ii.floyd_path(pre1, pre2)[1]) / util.average_speed
     return time_2
 
-def cal_expected_revenue(vehicle: util.Vehicle, node1: int, node2: int) -> int:
+def cal_expected_revenue(vehicle, node1: int, node2: int) -> int:
     first_rider = ii.riders[vehicle.picked_up[0]]
     time = first_rider.appear_slot
     s = first_rider.from_node
@@ -78,5 +78,11 @@ def cal_expected_revenue(vehicle: util.Vehicle, node1: int, node2: int) -> int:
 
     return expected_revenue
 
-def arrange_last(v: util.Vehicle):
-    return
+def cal_best_one(v, node: int, time:int) -> int:
+    factor = 0
+    for drop in gen_map.nodes:
+        ddl = time + ii.floyd_path(node, drop)[1] / util.average_speed + 20
+        if fc.check_feasible_3(v, node, drop, ddl):
+            factor += cp.P_ij[node][drop][time] * 5 # 1!!!!
+    factor *= cp.P_i[node][time]
+    return factor

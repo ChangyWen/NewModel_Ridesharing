@@ -16,7 +16,7 @@ def init_instances():
         if riders_df.loc[i, 'tpep_pickup_datetime'] > 1300:
             continue
         rider = util.Rider(i, riders_df.loc[i,'PULocationID'], riders_df.loc[i,'DOLocationID'],\
-                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + 20)
+                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + 25)
         rider.flag = 1
         riders.append(rider)
         vehicle = util.Vehicle(i, rider.from_node, rider.appear_slot, rider.r_id)
@@ -25,10 +25,11 @@ def init_instances():
 
 def init_request():
     # riders_df = gen_self_define_riders.choose_instances(5000)
-    riders_df = pd.read_csv(r'data\choosed_instances_5000.csv')
+    # riders_df = pd.read_csv(r'data\choosed_instances_5000.csv')
+    riders_df = pd.read_csv(r'data\self_gen_riders.csv')
     for i in range(len(riders_df)):
         rider = util.Rider(i, riders_df.loc[i,'PULocationID'], riders_df.loc[i,'DOLocationID'],\
-                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + 20)
+                      riders_df.loc[i,'tpep_pickup_datetime'], riders_df.loc[i,'tpep_dropoff_datetime'] + 25)
         riders.append(rider)
 
 def init_states():

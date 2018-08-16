@@ -1,13 +1,12 @@
 import init_instances as ii
+import strategy
 average_speed = 1
-
 
 class vertex(object):
     def __init__(self, v_id: int, x, y):
         self.v_id = v_id
         self.x_coor = x
         self.y_coor = y
-
 
 class Rider(object):
     def __init__(self, r_id, from_node: int, to_node: int, appear_slot: int, deadline: int):
@@ -63,7 +62,6 @@ class Vehicle(object):
                 from_node = to_node
         to_node = ii.riders[self.picked_up[0]].to_node
         self.route += ii.floyd_path(from_node, to_node)[0]
-
         temp_route = self.route.copy()
         n = 0
         nums = len(self.route) - 1
@@ -71,19 +69,40 @@ class Vehicle(object):
             if temp_route[i] == temp_route[i+1]:
                 self.route.pop(i - n)
                 n += 1
-        # ''''''
 
-    def update_pick(self, des_order:list):
+    def update_pick(self,node1:int, des_order:dict):
         '''
         update route (planning route from where the vehicle is and to the destination)
         :return: none
         '''
         if len(self.picked_up) == 3:
+            des_list = list(des_order.items())
+            self.route = ii.floyd_path(node1, des_list[0][1])
+            for i in range(len(des_list) - 1):
+                self.route += ii.floyd_path(des_list[i][1], des_list[i + 1][1])[0].pop(0)
             return
         else: # only two picked_up
             # gen_neighbor
             # find another pre_pickup node
             # update the route
+            des_list = list(des_order.items())
+            first_drop = des_list[0]
+            shortest_path = ii.floyd_path(node1, first_drop[1])
+            neighbor = strategy.gen_neighbor(shortest_path)
+            best, best_node, temp  = 0
+            for node in neighbor:
+                temp = strategy.cal_best_one(self, node, ii.riders[first_drop[0]].appear_slot)
+                if temp > best:
+                    best_node = node
+            if best_node == 0:
+                self.route = ii.floyd_path(node1, first_drop[1])[0]
+                for i in range(len(des_list) - 1):
+                    self.route += ii.floyd_path(des_list[i][1], des_list[i+1][1])[0].pop(0)
+            else:
+                self.route = ii.floyd_path(node1, best_node)[0]
+                self.route += ii.floyd_path(best_node, first_drop[1])[0].pop(0)
+                for i in range(len(des_list) - 1):
+                    self.route += ii.floyd_path(des_list[i][1], des_list[i+1][1])[0].pop(0)
             return
 
 class State(object):
@@ -96,7 +115,6 @@ class State(object):
         update riders
         :return:list
         '''
-
         print()
 
 class Floyd_Path(object):
