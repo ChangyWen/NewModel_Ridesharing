@@ -75,11 +75,14 @@ class Vehicle(object):
         update route (planning route from where the vehicle is and to the destination)
         :return: none
         '''
+        print('here1')
         if len(self.picked_up) == 3:
             des_list = list(des_order.items())
-            self.route = ii.floyd_path(node1, des_list[0][1])
+            self.route = ii.floyd_path(node1, des_list[0][1])[0]
             for i in range(len(des_list) - 1):
-                self.route += ii.floyd_path(des_list[i][1], des_list[i + 1][1])[0].pop(0)
+                list_temp = ii.floyd_path(des_list[i][1], des_list[i + 1][1])[0]
+                list_temp.pop(0)
+                self.route += list_temp
             return
         else: # only two picked_up
             # gen_neighbor
@@ -87,9 +90,9 @@ class Vehicle(object):
             # update the route
             des_list = list(des_order.items())
             first_drop = des_list[0]
-            shortest_path = ii.floyd_path(node1, first_drop[1])
-            neighbor = strategy.gen_neighbor(shortest_path)
-            best, best_node, temp  = 0
+            shortest_path = ii.floyd_path(node1, first_drop[1])[0]
+            neighbor = strategy.gen_neighbor(shortest_path, 10)
+            best, best_node, temp  = 0, 0 ,0
             for node in neighbor:
                 temp = strategy.cal_best_one(self, node, ii.riders[first_drop[0]].appear_slot)
                 if temp > best:
@@ -97,12 +100,20 @@ class Vehicle(object):
             if best_node == 0:
                 self.route = ii.floyd_path(node1, first_drop[1])[0]
                 for i in range(len(des_list) - 1):
-                    self.route += ii.floyd_path(des_list[i][1], des_list[i+1][1])[0].pop(0)
+                    list_temp = ii.floyd_path(des_list[i][1], des_list[i+1][1])[0]
+                    list_temp.pop(0)
+                    self.route += list_temp
             else:
                 self.route = ii.floyd_path(node1, best_node)[0]
-                self.route += ii.floyd_path(best_node, first_drop[1])[0].pop(0)
+                list_temp = ii.floyd_path(best_node, first_drop[1])[0]
+                list_temp.pop(0)
+                self.route += list_temp
+                # self.route += ii.floyd_path(best_node, first_drop[1])[0].pop(0)
                 for i in range(len(des_list) - 1):
-                    self.route += ii.floyd_path(des_list[i][1], des_list[i+1][1])[0].pop(0)
+                    list_temp = ii.floyd_path(des_list[i][1],des_list[i+1][1])[0]
+                    list_temp.pop(0)
+                    self.route += list_temp
+                    # self.route += ii.floyd_path(des_list[i][1], des_list[i+1][1])[0].pop(0)
             return
 
 class State(object):

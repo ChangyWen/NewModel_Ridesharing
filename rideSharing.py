@@ -80,7 +80,7 @@ def simulate_pickup(v: util.Vehicle) -> int:
             break
         if i == len(v.route) - 2:
             return cr.cal_final(v)
-    return
+    return cr.cal_final(v)
 
 def run():
     ii.init_param()

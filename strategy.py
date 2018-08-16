@@ -11,7 +11,7 @@ def routing_stage(s, node1: int, node2: int) -> list:
     else:
         return [node1, node2]
 
-def gen_neighbor(shortest_path: list, time_slack: int) -> list:
+def gen_neighbor(shortest_path: list, time_slack: int = 10) -> list:
     neighbor = []
     for i in range(len(shortest_path) - 1):
         for j in gen_map.nodes:
