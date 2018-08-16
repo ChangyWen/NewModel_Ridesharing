@@ -1,7 +1,8 @@
 import util
 import init_instances as ii
-import strategy as st
 import cal_revenue as cr
+import feasible_check as fc
+import strategy as st
 def action(vehicle: util.Vehicle):
     # state = copy.deepcopy(ii.state)
     # riders = copy.deepcopy(ii.riders)
@@ -32,6 +33,47 @@ def action(vehicle: util.Vehicle):
 def update(vehicle: util.Vehicle):
     vehicle.update_first()
 
+def simulate_pickup(v: util.Vehicle) -> int:
+    v.passed_route = []
+    v.passed_route.append(v.route[0])
+    slot_i = v.slot
+    flag = False
+    for i in range(1, len(v.route) - 1):
+        slot_i += ii.floyd_path(v.route[i-1], v.route[i])[1] / util.average_speed
+        v.passed_route.append(v.route[i])
+        if len(ii.state.s_n[int(slot_i)][v.route[i]])> 0:
+            for rider in ii.state.s_n[int(slot_i)][v.route[i]]:
+                (des_order, isOk) = fc.feasible_pick(v, rider, slot_i)
+                if isOk:
+                    v.picked_up.append(rider)
+                    v.onboard.append(rider)
+                    v.update_pick(des_order)
+                    flag = True
+                    break
+        if flag:
+            break
+        if i == len(v.route) - 2:
+            return cr.cal_final(v)
+    slot_i = v.slot
+    flag = False
+    for node in range(1, len(v.route) - 1):
+        slot_i += ii.floyd_path(v.route[i - 1], v.route[i])[1] / util.average_speed
+        v.passed_route.append(v.route[i])
+        if len(ii.state.s_n[int(slot_i)][v.route[i]])> 0:
+            for rider in ii.state.s_n[int(slot_i)][v.route[i]]:
+                (des_order, isOk) = fc.feasible_pick(v, rider, slot_i)
+                if isOk:
+                    v.picked_up.append(rider)
+                    v.onboard.append(rider)
+                    v.update_pick(des_order)
+                    flag = True
+                    break
+        if flag:
+            break
+        if i == len(v.route) - 2:
+            return cr.cal_final(v)
+    return
+
 def run():
     ii.init_param()
     # vehicles = copy.deepcopy(ii.vehicles)
@@ -39,8 +81,9 @@ def run():
     # for i in range(len(vehicles)):
     for i in range(3):
         action(vehicles[i])
-        print('yeah')
+        print('vehicle%(i)d:'%{'i':i})
         update(vehicles[i])
+        simulate_pickup(vehicles[i])
         # print(vehicles[i].location)
         # print(ii.riders[vehicles[i].picked_up[0]].from_node)
         # print(ii.riders[vehicles[i].picked_up[0]].to_node)

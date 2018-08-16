@@ -30,7 +30,9 @@ class Vehicle(object):
         self.picked_up = [first_rider]
         self.pre_pickup = []
         self.route = []
+        self.passed_route = []
         self.violation_time = 0
+        self.onboard = [first_rider]
 
     def insert_rider(self, rider: int, index: int = -1):
         if index == -1:
@@ -71,6 +73,19 @@ class Vehicle(object):
                 n += 1
         # ''''''
 
+    def update_pick(self, des_order:list):
+        '''
+        update route (planning route from where the vehicle is and to the destination)
+        :return: none
+        '''
+        if len(self.picked_up) == 3:
+            return
+        else: # only two picked_up
+            # gen_neighbor
+            # find another pre_pickup node
+            # update the route
+            return
+
 class State(object):
     def __init__(self, slot_riders: dict):
         self.s_n = slot_riders
@@ -81,6 +96,7 @@ class State(object):
         update riders
         :return:list
         '''
+
         print()
 
 class Floyd_Path(object):
