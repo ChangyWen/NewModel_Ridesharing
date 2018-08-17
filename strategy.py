@@ -56,7 +56,7 @@ def cal_expected_revenue(vehicle, node1: int, node2: int) -> int:
         set2_dict = fc.feasible2_set(type1,d,ddl, drop1, ddl_1, pre2, time_2)
         temp2 = 0
         for drop2,type2 in set2_dict.items():
-            w = cr.cal_revenue(type1,type2, pre1,drop1,time_1, pre2,drop2, time_2)
+            w = cr.cal_two_revenue(vehicle, type1,type2, pre1,drop1,time_1, pre2,drop2, time_2, d)
             temp2 += w * cp.P_ij[pre2][drop2][int(time_2)]
         temp2 = temp2 * cp.P_i[pre2][int(time_2)]
         temp1 += cp.P_ij[pre1][drop1][int(time_1)] * temp2
@@ -71,7 +71,7 @@ def cal_expected_revenue(vehicle, node1: int, node2: int) -> int:
     factor2 *= cp.P_i[pre2][int(time_2)]
     temp = 0
     for drop2,type2 in set2_dict.items():
-        w = 1 # !!!!!
+        w = cr.cal_one_revenue(vehicle,type2, pre1, pre2, drop2)    # !!!!!
         temp += w * cp.P_ij[pre2][drop2][int(time_2)]
     factor2 *= temp
     expected_revenue += factor2
@@ -83,6 +83,7 @@ def cal_best_one(v, node: int, time:int) -> int:
     for drop in gen_map.nodes:
         ddl = time + ii.floyd_path(node, drop)[1] / util.average_speed + 20
         if fc.check_feasible_3(v, node, drop, ddl):
-            factor += cp.P_ij[node][drop][time] * 5 # 1!!!!
+            w = cr.cal_last_one_revenue(v, node ,drop)
+            factor += cp.P_ij[node][drop][time] * w # 1!!!!
     factor *= cp.P_i[node][time]
     return factor

@@ -84,7 +84,7 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
         d,drop1 = drop1,d
         ddl,ddl_1 = ddl_1,ddl
     for drop2 in gen_map.nodes:
-        dis1 = ii.floyd_path(pre2, drop2)[1] + ii.floyd_path(drop2, drop1)[1] + ii.floyd_path(drop2, d)[1]
+        dis1 = ii.floyd_path(pre2, drop2)[1] + ii.floyd_path(drop2, drop1)[1] + ii.floyd_path(drop1, d)[1]
         dis2 = ii.floyd_path(pre2, drop1)[1] + ii.floyd_path(drop1, drop2)[1] + ii.floyd_path(drop2, d)[1]
         dis3 = ii.floyd_path(pre2, drop1)[1] + ii.floyd_path(drop1, d)[1] + ii.floyd_path(d, drop2)[1]
         order_dict[3], order_dict[4], order_dict[5] = dis1, dis2, dis3
@@ -99,12 +99,6 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
             type2 = sorted(true_dict.items(), key=lambda d: d[1], reverse=False)[0][0]
         return_dict[drop2] = type2
     return return_dict
-    # elif type1 == 3:
-    #     for drop2 in gen_map.nodes:
-    #         dis1 = ii.floyd_path(pre2, drop2)[1] + ii.floyd_path(drop2, d)[1] + ii.floyd_path(d, drop1)[1]
-    #         dis2 = ii.floyd_path(pre2, d)[1] + ii.floyd_path(d, drop2)[1] + ii.floyd_path(drop2, drop1)[1]
-    #         dis3 = ii.floyd_path(pre2, d)[1] + ii.floyd_path(d, drop1)[1] + ii.floyd_path(drop1, drop2)[1]
-    #         feasible2_check(type1, pre2, drop2, drop1, ddl_1, d, ddl, time_2)
 
 def feasible_pick(v ,rider: int, slot: int) -> (dict, bool):
     dict1 = {}
@@ -112,8 +106,9 @@ def feasible_pick(v ,rider: int, slot: int) -> (dict, bool):
     des = []
     final_des = {}
     s = ii.riders[rider].from_node
+    multiple_feasible = []
     if v.load >= v.cap:
-        return [],False
+        return {},False
     else:
         for rider in v.onboard:
             ddl_list.append(ii.riders[rider].deadline)
@@ -131,12 +126,18 @@ def feasible_pick(v ,rider: int, slot: int) -> (dict, bool):
                         t_k = t_j + ii.floyd_path(des[j], des[k])[1]
                         if t_i <= ddl_list[i] and t_j <= ddl_list[j] and t_k <= ddl_list[k]:
                             final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j],v.onboard[k]:des[k]}
-                            return final_des, True
+                            multiple_feasible.append((final_des, t_k))
+                            # return final_des, True
                 else:
                     if t_i <= ddl_list[i] and t_j <= ddl_list[j]:
                         final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j]}
-                        return final_des, True
-    return {},False
+                        multiple_feasible.append((final_des, t_j))
+                        # return final_des, True
+        if len(multiple_feasible) > 0:
+            sorted(multiple_feasible, key=lambda x: x[1])
+            return multiple_feasible[0][0], True
+        else:
+            return {},False
 
 def check_feasible_3(v, node: int, drop:int ,ddl:int) -> bool:
     return False
