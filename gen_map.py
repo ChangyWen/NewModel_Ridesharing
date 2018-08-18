@@ -14,16 +14,23 @@ nodes = [i for i in range(1,loc_nums + 1)]
 def gen_node_list() -> list:
     node_list = []
     count = np.zeros([loc_nums + 1,1])
+    check = np.zeros([loc_nums + 1, loc_nums + 1])
     for i in range(len(nodes)):
         from_node = nodes[i]
         j = randint(1,4)
-        count[from_node] += j
         for k in range(j):
-            while True:
-                to_node = choice(nodes)
-                if count[to_node] <= 4:
+            to_node = 0
+            for m in range(len(nodes)):
+                to_node = nodes[m]
+                if check[from_node][to_node] == 0 and count[to_node][0] <= 4 and from_node != to_node:
                     break
+            if to_node == 0:
+                break
             tuple_temp = (from_node, to_node, randint(1,20))
+            check[from_node][to_node] = 1
+            check[to_node][from_node] = 1
+            count[to_node][0] += 1
+            count[from_node][0] += 1
             node_list.append(tuple_temp)
     np.savetxt(r'data\node_list.csv', node_list, delimiter=',', fmt = '%d')
     gen_graph(node_list)

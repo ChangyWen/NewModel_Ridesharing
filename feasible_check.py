@@ -1,6 +1,7 @@
 import gen_map
 import util
 import init_instances as ii
+from collections import OrderedDict
 
 def feasible1_check(pre1:int,drop1:int,pre2:int,d:int, ddl: int, time_1:int) -> dict:
     feasible_dict = {}
@@ -65,12 +66,13 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
             dis_dict = {}
             dis1 = ii.floyd_path(pre2, drop2)[1] + ii.floyd_path(drop2, d)[1]
             dis_dict[1] = dis1
-            if time_2 + dis1 / util.average_speed > time_2 + ii.floyd_path(pre2, drop2)[1] /util.average_speed:
+            # if time_2 + dis1 / util.average_speed > time_2 + ii.floyd_path(pre2, drop2)[1] /util.average_speed:
+            if time_2 + dis1 / util.average_speed > ddl:
                 true_dict[1] = False
             dis2 = ii.floyd_path(pre2, d)[1] + ii.floyd_path(d, drop2)[1]
             dis_dict[2] = dis2
             if time_2 + ii.floyd_path(pre2, d)[1] /util.average_speed > ddl or time_2 + dis2 /util.average_speed > \
-                time_2 + ii.floyd_path(pre2, drop2)[1] /util.average_speed:
+                time_2 + ii.floyd_path(pre2, drop2)[1] /util.average_speed + 40:
                 true_dict[2] = False
             if True not in true_dict.values():
                 continue
@@ -101,10 +103,8 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
     return return_dict
 
 def feasible_pick(v ,rider: int, slot: int) -> (dict, bool):
-    dict1 = {}
     ddl_list = []
     des = []
-    final_des = {}
     s = ii.riders[rider].from_node
     multiple_feasible = []
     if v.load >= v.cap:
@@ -117,27 +117,77 @@ def feasible_pick(v ,rider: int, slot: int) -> (dict, bool):
             for j in range(len(des)):
                 if j == i:
                     continue
-                t_i = slot + ii.floyd_path(s,des[i])[1]
-                t_j = t_i + ii.floyd_path(des[i], des[j])[1]
+                t_i = slot + ii.floyd_path(s,des[i])[1] / util.average_speed
+                # dis += ii.floyd_path(s,des[i])[1]
+                t_j = t_i + ii.floyd_path(des[i], des[j])[1] / util.average_speed
+                # dis += ii.floyd_path(des[i], des[j])[1]
                 if len(des) == 3:
                     for k in range(len(des)):
                         if k == i or k == j:
                             continue
-                        t_k = t_j + ii.floyd_path(des[j], des[k])[1]
+                        print('i,j,k:')
+                        print(i,j,k)
+                        print(des[i])
+                        print(des[j])
+                        print(des[k])
+                        final_des = OrderedDict()
+                        t_k = t_j + ii.floyd_path(des[j], des[k])[1] / util.average_speed
+                        dis = ii.floyd_path(des[j], des[k])[1] + ii.floyd_path(des[i], des[j])[1] + ii.floyd_path(s,des[i])[1]
                         if t_i <= ddl_list[i] and t_j <= ddl_list[j] and t_k <= ddl_list[k]:
-                            final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j],v.onboard[k]:des[k]}
-                            multiple_feasible.append((final_des, t_k))
-                            # return final_des, True
+                            print('yeah')
+                            print(des[i])
+                            print(des[j])
+                            print(des[k])
+                            final_des[v.onboard[i]] = des[i]
+                            final_des[v.onboard[j]] = des[j]
+                            final_des[v.onboard[k]] = des[k]
+                            # final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j],v.onboard[k]:des[k]}
+                            print(final_des)
+                            multiple_feasible.append((final_des, dis))
                 else:
+                    final_des = OrderedDict()
+                    dis = ii.floyd_path(des[i], des[j])[1] + ii.floyd_path(s,des[i])[1]
                     if t_i <= ddl_list[i] and t_j <= ddl_list[j]:
-                        final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j]}
-                        multiple_feasible.append((final_des, t_j))
-                        # return final_des, True
+                        final_des[v.onboard[i]] = des[i]
+                        final_des[v.onboard[j]] = des[j]
+                        # final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j]}
+                        multiple_feasible.append((final_des, dis))
         if len(multiple_feasible) > 0:
-            sorted(multiple_feasible, key=lambda x: x[1])
+            print(multiple_feasible)
+            multiple_feasible = sorted(multiple_feasible, key=lambda x: x[1], reverse = False)
+            print(multiple_feasible)
             return multiple_feasible[0][0], True
         else:
             return {},False
 
-def check_feasible_3(v, node: int, drop:int ,ddl:int) -> bool:
-    return False
+def check_feasible_3(v, s: int, drop:int ,ddl:int, slot:int) -> (list,bool):
+    ddl_list = []
+    des = []
+    multiple_feasible = []
+    if v.load >= v.cap:
+        return {}, False
+    else:
+        for rider in v.onboard:
+            ddl_list.append(ii.riders[rider].deadline)
+            des.append(ii.riders[rider].to_node)
+        ddl_list.append(ddl)
+        des.append(drop)
+        for i in range(len(des)):
+            for j in range(len(des)):
+                if j == i:
+                    continue
+                t_i = slot + ii.floyd_path(s, des[i])[1] / util.average_speed
+                t_j = t_i + ii.floyd_path(des[i], des[j])[1] / util.average_speed
+                for k in range(len(des)):
+                    if k == i or k == j:
+                        continue
+                    t_k = t_j + ii.floyd_path(des[j], des[k])[1] / util.average_speed
+                    if t_i <= ddl_list[i] and t_j <= ddl_list[j] and t_k <= ddl_list[k]:
+                        final_des = [des[i], des[j], des[k]]
+                        multiple_feasible.append((final_des, t_k))
+
+        if len(multiple_feasible) > 0:
+            sorted(multiple_feasible, key=lambda x: x[1])
+            return multiple_feasible[0][0], True
+        else:
+            return [], False

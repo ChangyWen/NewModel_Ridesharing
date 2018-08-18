@@ -15,7 +15,8 @@ def gen_neighbor(shortest_path: list, time_slack: int = 10) -> list:
     neighbor = []
     for i in range(len(shortest_path) - 1):
         for j in gen_map.nodes:
-            if j not in shortest_path and j not in neighbor and i and ii.floyd_path(i,j)[1] <= time_slack / 2:
+            # j not in shortest_path and
+            if  j not in neighbor and i and ii.floyd_path(i,j)[1] <= time_slack / 2:
             # if shortest_path[i] != j and j not in neighbor and i and ii.floyd_path(i,j)[1] <= time_slack / 2:
                 neighbor.append(j)
     dict1 = {}
@@ -71,7 +72,7 @@ def cal_expected_revenue(vehicle, node1: int, node2: int) -> int:
     factor2 *= cp.P_i[pre2][int(time_2)]
     temp = 0
     for drop2,type2 in set2_dict.items():
-        w = cr.cal_one_revenue(vehicle,type2, pre1, pre2, drop2)    # !!!!!
+        w = cr.cal_one_revenue(vehicle,type2, pre1, pre2, drop2, time_2)    # !!!!!
         temp += w * cp.P_ij[pre2][drop2][int(time_2)]
     factor2 *= temp
     expected_revenue += factor2
@@ -81,9 +82,10 @@ def cal_expected_revenue(vehicle, node1: int, node2: int) -> int:
 def cal_best_one(v, node: int, time:int) -> int:
     factor = 0
     for drop in gen_map.nodes:
-        ddl = time + ii.floyd_path(node, drop)[1] / util.average_speed + 20
-        if fc.check_feasible_3(v, node, drop, ddl):
-            w = cr.cal_last_one_revenue(v, node ,drop)
-            factor += cp.P_ij[node][drop][time] * w # 1!!!!
+        ddl = time + ii.floyd_path(node, drop)[1] / util.average_speed + 40
+        (drop_list, flag) = fc.check_feasible_3(v, node, drop, ddl, time)
+        if flag:
+            w = cr.cal_last_one_revenue(v, drop_list, time, node)
+            factor += cp.P_ij[node][drop][time] * w
     factor *= cp.P_i[node][time]
     return factor
