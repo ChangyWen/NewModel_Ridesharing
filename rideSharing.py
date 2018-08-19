@@ -172,26 +172,13 @@ def simulate_pickup(v: util.Vehicle) -> int:
 
 def run():
     ii.init_param()
-    # print(ii.floyd_path(3,21)[0])
-    # print(ii.floyd_path(3,21)[1])
-    # vehicles = copy.deepcopy(ii.vehicles)
     vehicles = ii.vehicles
-    # print(ii.riders[vehicles[8].picked_up[0]].appear_slot)
-    # print(ii.riders[vehicles[8].picked_up[0]].deadline)
-    # print(ii.riders[0].to_node)
     # for i in range(len(vehicles)):
-    for i in range(1):
+    for i in range(10):
         action(vehicles[i])
         print('vehicle%(i)d:'%{'i':i})
         update(vehicles[i])
         print(simulate_pickup(vehicles[i]))
-
-        print(vehicles[0].picked_up[2])
-        print(ii.floyd_path(ii.riders[vehicles[0].picked_up[2]].from_node,ii.riders[vehicles[0].picked_up[2]].to_node)[0])
-        print(ii.floyd_path(ii.riders[vehicles[0].picked_up[2]].from_node,ii.riders[vehicles[0].picked_up[2]].to_node)[1])
-        print(ii.riders[vehicles[0].picked_up[2]].appear_slot)
-        print(ii.riders[vehicles[0].picked_up[2]].deadline)
-
         print('passed route:')
         print(vehicles[i].passed_route)
 #

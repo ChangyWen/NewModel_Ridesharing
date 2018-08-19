@@ -5,7 +5,6 @@ beta = 0.4
 rate = 4
 s = ii.state
 def cal_two_revenue(v, type1, type2, pre1,drop1, time1,pre2,drop2, time2, d:int) -> int:
-    # if type1 == 1:
     if type2 == 1:
         a_1 = time1 + ii.floyd_path(pre1, drop1)[1] / util.average_speed
         a_2 = time2 + ii.floyd_path(pre2, drop2)[1] / util.average_speed
@@ -95,9 +94,6 @@ def cal_last_one_revenue(v, drop_list, time ,node):
                                  1] / util.average_speed)
             dis_i.append(ii.floyd_path(ii.riders[v.onboard[1]].from_node, ii.riders[v.onboard[1]].to_node)[1])
         node = drop_list[i]
-    # print(len(a_i_list))
-    # print(len(ea_i_list))
-    # print(dis_i)
     for i in range(len(a_i_list)):
         r = rate * dis_i[i] - beta * (a_i_list[i] - ea_i_list[i])
         revenue += r

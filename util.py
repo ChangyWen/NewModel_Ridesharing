@@ -83,12 +83,8 @@ class Vehicle(object):
                 list_temp.pop(0)
                 self.route += list_temp
             return
-        else: # only two picked_up
-            # gen_neighbor
-            # find another pre_pickup node
-            # update the route
+        else:
             des_list = list(des_order.items())
-            first_drop = des_list[0]
             shortest_path = ii.floyd_path(node1, des_list[0][1])[0]
             slack = ii.riders[des_list[0][0]].deadline - (self.slot + ii.floyd_path(node1, des_list[0][1])[1] / average_speed)
             neighbor = strategy.gen_neighbor(shortest_path, slack)
@@ -118,12 +114,6 @@ class Vehicle(object):
                     list_temp = ii.floyd_path(des_list[0][1], des_list[1][1])[0]
                     list_temp.pop(0)
                     self.route += list_temp
-                # self.route += ii.floyd_path(best_node, first_drop[1])[0].pop(0)
-                #     for i in range(len(des_list) - 1):
-                #         list_temp = ii.floyd_path(des_list[i][1],des_list[i+1][1])[0]
-                #         list_temp.pop(0)
-                #         self.route += list_temp
-                    # self.route += ii.floyd_path(des_list[i][1], des_list[i+1][1])[0].pop(0)
             return
 
 class State(object):

@@ -15,9 +15,7 @@ def gen_neighbor(shortest_path: list, time_slack: int = 10) -> list:
     neighbor = []
     for i in range(len(shortest_path) - 1):
         for j in gen_map.nodes:
-            # j not in shortest_path and
             if  j not in neighbor and i and ii.floyd_path(i,j)[1] <= time_slack / 2:
-            # if shortest_path[i] != j and j not in neighbor and i and ii.floyd_path(i,j)[1] <= time_slack / 2:
                 neighbor.append(j)
     dict1 = {}
     s = shortest_path[0]
@@ -47,7 +45,6 @@ def cal_expected_revenue(vehicle, node1: int, node2: int) -> int:
     pre_pickup = routing_stage(s,node1, node2)
     pre1, pre2 = pre_pickup[0], pre_pickup[1]
     time_1 = ii.floyd_path(s, pre1)[1] / util.average_speed + time
-    # time2 = ii.floyd_path(pre1, pre2)[1] / util.average_speed + time1
     expected_revenue = cp.P_i[pre1][int(time_1)]
     set1_dict = fc.feasible1_set(d, ddl, pre1, time_1, pre2)
     temp1 = 0

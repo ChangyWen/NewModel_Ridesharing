@@ -66,7 +66,6 @@ def feasible2_set(type1:int,d:int,ddl:int, drop1: int,ddl_1:int, pre2: int, time
             dis_dict = {}
             dis1 = ii.floyd_path(pre2, drop2)[1] + ii.floyd_path(drop2, d)[1]
             dis_dict[1] = dis1
-            # if time_2 + dis1 / util.average_speed > time_2 + ii.floyd_path(pre2, drop2)[1] /util.average_speed:
             if time_2 + dis1 / util.average_speed > ddl:
                 true_dict[1] = False
             dis2 = ii.floyd_path(pre2, d)[1] + ii.floyd_path(d, drop2)[1]
@@ -118,31 +117,18 @@ def feasible_pick(v ,rider: int, slot: int) -> (dict, bool):
                 if j == i:
                     continue
                 t_i = slot + ii.floyd_path(s,des[i])[1] / util.average_speed
-                # dis += ii.floyd_path(s,des[i])[1]
                 t_j = t_i + ii.floyd_path(des[i], des[j])[1] / util.average_speed
-                # dis += ii.floyd_path(des[i], des[j])[1]
                 if len(des) == 3:
                     for k in range(len(des)):
                         if k == i or k == j:
                             continue
-                        print('i,j,k:')
-                        print(i,j,k)
-                        print(des[i])
-                        print(des[j])
-                        print(des[k])
                         final_des = OrderedDict()
                         t_k = t_j + ii.floyd_path(des[j], des[k])[1] / util.average_speed
                         dis = ii.floyd_path(des[j], des[k])[1] + ii.floyd_path(des[i], des[j])[1] + ii.floyd_path(s,des[i])[1]
                         if t_i <= ddl_list[i] and t_j <= ddl_list[j] and t_k <= ddl_list[k]:
-                            print('yeah')
-                            print(des[i])
-                            print(des[j])
-                            print(des[k])
                             final_des[v.onboard[i]] = des[i]
                             final_des[v.onboard[j]] = des[j]
                             final_des[v.onboard[k]] = des[k]
-                            # final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j],v.onboard[k]:des[k]}
-                            print(final_des)
                             multiple_feasible.append((final_des, dis))
                 else:
                     final_des = OrderedDict()
@@ -150,12 +136,9 @@ def feasible_pick(v ,rider: int, slot: int) -> (dict, bool):
                     if t_i <= ddl_list[i] and t_j <= ddl_list[j]:
                         final_des[v.onboard[i]] = des[i]
                         final_des[v.onboard[j]] = des[j]
-                        # final_des = {v.onboard[i]:des[i],v.onboard[j]:des[j]}
                         multiple_feasible.append((final_des, dis))
         if len(multiple_feasible) > 0:
-            print(multiple_feasible)
             multiple_feasible = sorted(multiple_feasible, key=lambda x: x[1], reverse = False)
-            print(multiple_feasible)
             return multiple_feasible[0][0], True
         else:
             return {},False

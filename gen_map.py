@@ -53,11 +53,6 @@ def set_Floyd_Path():
         path_map[nodes.index(x)][nodes.index(y)] = nodes.index(y)
         path_map[nodes.index(y)][nodes.index(x)] = nodes.index(x)
     floyd_path = util.Floyd_Path(nodes, node_map, path_map)
-    # print(floyd_path(7,13))
-    '''
-    save shortest path in file
-    '''
-    # gen_graph(node_list)
     return floyd_path
 
 def gen_graph(node_list: list):
@@ -66,7 +61,4 @@ def gen_graph(node_list: list):
     nx.draw_spring(G, with_labels=True,font_size = 10, node_size = 16)
     plt.show()
     return
-
-# gen_node_list()
-# set_Floyd_Path()
 

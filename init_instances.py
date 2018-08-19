@@ -2,7 +2,6 @@ import util
 import gen_map
 import pandas as pd
 import cal_Probability as cp
-#from random import randint
 
 riders = []
 vehicles = []
@@ -26,8 +25,6 @@ def init_instances():
         nums += 1
 
 def init_request():
-    # riders_df = gen_self_define_riders.choose_instances(5000)
-    # riders_df = pd.read_csv(r'data\choosed_instances_5000.csv')
     global nums
     riders_df = pd.read_csv(r'data\self_gen_riders.csv')
     for i in range(len(riders_df)):
