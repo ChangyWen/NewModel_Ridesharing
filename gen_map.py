@@ -10,7 +10,7 @@ import csv
 
 nodes = [i for i in range(1,loc_nums + 1)]
 # path = np.array([loc_nums + 1,loc_nums + 1], dtype=tuple)
-
+delta = {}
 def gen_node_list() -> list:
     node_list = []
     count = np.zeros([loc_nums + 1,1])
@@ -42,13 +42,17 @@ def gen_map():
     return node_map, path_map
 
 def set_Floyd_Path():
+    global delta
     node_map, path_map = gen_map()
     node_list = list(csv.reader(open(r'data\node_list.csv', 'r')))
     for i in range(len(node_list)):
         node_list[i] = tuple(list(map(int,node_list[i])))
     for i in range(len(nodes)):
         node_map[i][i] = 0
+    for i in nodes:
+        delta[(i,i)] = 0
     for x,y,val in node_list:
+        delta[(x, y)] = delta[(y, x)] = val / util.average_speed
         node_map[nodes.index(x)][nodes.index(y)] = node_map[nodes.index(y)][nodes.index(x)] = val
         path_map[nodes.index(x)][nodes.index(y)] = nodes.index(y)
         path_map[nodes.index(y)][nodes.index(x)] = nodes.index(x)

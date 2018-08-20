@@ -80,7 +80,8 @@ class Vehicle(object):
             self.route = ii.floyd_path(node1, des_list[0][1])[0]
             for i in range(len(des_list) - 1):
                 list_temp = ii.floyd_path(des_list[i][1], des_list[i + 1][1])[0]
-                list_temp.pop(0)
+                if len(list_temp) > 1:
+                    list_temp.pop(0)
                 self.route += list_temp
             return
         else:
@@ -92,7 +93,8 @@ class Vehicle(object):
             if len(neighbor) == 0:
                 self.route = shortest_path
                 list_temp = ii.floyd_path(des_list[0][1], des_list[1][1])[0]
-                list_temp.pop(0)
+                if len(list_temp) > 1:
+                    list_temp.pop(0)
                 self.route += list_temp
             else:
                 for node in neighbor:
@@ -103,25 +105,24 @@ class Vehicle(object):
                 if best_node == 0:
                     self.route = shortest_path
                     list_temp = ii.floyd_path(des_list[0][1], des_list[1][1])[0]
-                    list_temp.pop(0)
+                    if len(list_temp) > 1:
+                        list_temp.pop(0)
                     self.route += list_temp
                 else:
-                    print('excuse')
                     self.route = ii.floyd_path(node1, best_node)[0]
                     list_temp = ii.floyd_path(best_node, des_list[0][1])[0]
-                    list_temp.pop(0)
+                    if len(list_temp) > 1:
+                        list_temp.pop(0)
                     self.route += list_temp
                     list_temp = ii.floyd_path(des_list[0][1], des_list[1][1])[0]
-                    list_temp.pop(0)
+                    if len(list_temp) > 1:
+                        list_temp.pop(0)
                     self.route += list_temp
             return
 
 class State(object):
     def __init__(self, slot_riders: dict):
         self.s_n = slot_riders
-
-    def update(self):
-        print()
 
 class Floyd_Path(object):
     def __init__(self, node , node_map, path_map):
@@ -150,6 +151,9 @@ class Floyd_Path(object):
         temp_node = self.from_node
         obj_node = self.to_node
         node_list.append(self.node[temp_node])
+        if temp_node == obj_node:
+            node_list.append(self.node[obj_node])
+            return node_list
         while True:
             node_list.append(self.node[self.path_map[temp_node][obj_node]])
             temp_node = self.path_map[temp_node][obj_node]

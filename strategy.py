@@ -48,32 +48,56 @@ def cal_expected_revenue(vehicle, node1: int, node2: int) -> int:
     expected_revenue = cp.P_i[pre1][int(time_1)]
     set1_dict = fc.feasible1_set(d, ddl, pre1, time_1, pre2)
     temp1 = 0
+    P, P1, P2, P3 = 0, 0, 0, 0
     for drop1,type1 in set1_dict.items():
         time_2 = cal_time_2(type1, pre1, drop1, pre2, time_1)
         ddl_1 = time_1 + ii.floyd_path(pre1, drop1)[1] / util.average_speed + 20
         set2_dict = fc.feasible2_set(type1,d,ddl, drop1, ddl_1, pre2, time_2)
         temp2 = 0
+
+        infeasible_drop2 = set(gen_map.nodes) ^ set(set2_dict.keys())
+        term1 = 1 - cp.P_i[pre2][int(time_2)]
+        w = cr.cal_pre1_revenue(vehicle, type1, pre1, drop1,time_1, pre2, d)
+        for drop2 in infeasible_drop2:
+            P1 += cp.P_ij[pre2][drop2][int(time_2)]
+        term = w * P1 * cp.P_i[pre2][int(time_2)] + term1 * w
+        P1 = P1 * cp.P_i[pre2][int(time_2)]
+
         for drop2,type2 in set2_dict.items():
             w = cr.cal_two_revenue(vehicle, type1,type2, pre1,drop1,time_1, pre2,drop2, time_2, d)
             temp2 += w * cp.P_ij[pre2][drop2][int(time_2)]
+            P2 += cp.P_ij[pre2][drop2][int(time_2)]
         temp2 = temp2 * cp.P_i[pre2][int(time_2)]
         temp1 += cp.P_ij[pre1][drop1][int(time_1)] * temp2
+        temp1 += cp.P_ij[pre1][drop1][int(time_1)] * term
+        P2 = P2 * cp.P_i[pre2][int(time_2)]
+        P += (P1 + P2 + term1) * cp.P_ij[pre1][drop1][int(time_1)]
     expected_revenue *= temp1
+    P *= cp.P_i[pre1][int(time_1)]
 
     factor2 = 1 - cp.P_i[pre1][int(time_1)]
+    temp4 = 0
     rest = set(gen_map.nodes) ^ set(set1_dict.keys())
     for drop1 in rest:
-        factor2 += cp.P_i[pre1][int(time_1)] * cp.P_ij[pre2][drop1][int(time_1)]
+        temp4 += cp.P_ij[pre1][drop1][int(time_1)]
+    factor2 = factor2 + cp.P_i[pre1][int(time_1)] * temp4
+    P4 = factor2
+    #   factor2 += cp.P_i[pre1][int(time_1)] * cp.P_ij[pre2][drop1][int(time_1)]
     time_2 = time_1 + ii.floyd_path(pre1, pre2)[1] / util.average_speed
     set2_dict = fc.feasible2_set(1, d, ddl, 0, 0, pre2, time_2)
     factor2 *= cp.P_i[pre2][int(time_2)]
     temp = 0
+    P5 = 0
     for drop2,type2 in set2_dict.items():
-        w = cr.cal_one_revenue(vehicle,type2, pre1, pre2, drop2, time_2)    # !!!!!
+        P5 += cp.P_ij[pre2][drop2][int(time_2)]
+        w = cr.cal_pre2_revenue(vehicle,type2, pre1, pre2, drop2, time_2)
         temp += w * cp.P_ij[pre2][drop2][int(time_2)]
+    P5 *= cp.P_i[pre2][int(time_2)]
+    P = P + P4 + P5
     factor2 *= temp
     expected_revenue += factor2
-
+    no_ride_sharing_revenue = P * cr.cal_no_revenue(vehicle,pre1, pre2, d)
+    expected_revenue += no_ride_sharing_revenue
     return expected_revenue
 
 def cal_best_one(v, node: int, time:int) -> int:
